@@ -19,7 +19,7 @@ class ProductList with ChangeNotifier {
     return _items.length;
   }
 
-  void saveProduct(Map<String, Object> data) {
+  Future<void> saveProduct(Map<String, Object> data) {
     bool hasId = data['id'] != null;
 
     final product = Product(
@@ -29,17 +29,17 @@ class ProductList with ChangeNotifier {
         imageUrl: data['urlImage'] as String,
         price: data['price'] as double);
     if (hasId) {
-      updateProduct(product);
+      return updateProduct(product);
     } else {
-      addProduct(product);
+      return addProduct(product);
     }
   }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     final future = http.post(Uri.parse('$_baseUrl/products.json'),
         body: jsonEncode(
             product.toJson())); //.json é obrigatório para o Firebase realtiime
-    future.then((response) {
+    return future.then<void>((response) {
       // print(jsonDecode(response.body)); // para saber o que eu recebi de volta do firebase: retornou {name: -N51fzRx0lBTREWTBpF7}
       // com os dados obtidos acima, vou criar um produto com o id (nome) que veio do firebase
       final id = jsonDecode(response.body)['name'];
@@ -55,12 +55,13 @@ class ProductList with ChangeNotifier {
     });
   }
 
-  void updateProduct(Product product) {
+  Future<void> updateProduct(Product product) {
     int index = _items.indexWhere((element) => element.id == product.id);
     if (index >= 0) {
       _items[index] = product;
       notifyListeners();
     }
+    return Future.value();
   }
 
   void deleteProduct(Product product) {
