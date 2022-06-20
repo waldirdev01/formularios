@@ -12,6 +12,25 @@ class Product with ChangeNotifier {
       required this.imageUrl,
       required this.price,
       this.isFavorite = false});
+ /* Pessoa.fromJson(dynamic map)
+      : nome = map[kPessoaNomeColumn],
+        apelido = map[kPessoaApelidoColumn],
+        foto = map[kPessoaFotoColumn],
+        id = map[kPessoaIdColumn],
+        nomeMae = map[kPessoaMae],
+        endereco = map[kPessoaEndereco],
+        telefone = map[kPessoaTelefone],
+        anotacoes = map[kPessoaAnotacoes];*/
+
+  Map<String, Object> toJson() {
+    return {
+      'name': name,
+      'description': description,
+      'imageUrl': imageUrl,
+      'price': price,
+      'isFavorite': isFavorite,
+    };
+  }
 
   void toggleFavorite() {
     isFavorite = !isFavorite;
