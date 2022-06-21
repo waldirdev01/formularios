@@ -6,7 +6,11 @@ import 'package:formularios/utils/app_routs.dart';
 import 'package:provider/provider.dart';
 
 class ProductsPage extends StatelessWidget {
-  const ProductsPage({Key? key}) : super(key: key);
+ const ProductsPage({Key? key}) : super(key: key);
+
+  Future<void> _refreshProducts(BuildContext context) {
+    return Provider.of<ProductList>(context, listen: false).loadProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,16 +27,19 @@ class ProductsPage extends StatelessWidget {
         ],
       ),
       drawer: const AppDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(8),
-        child: ListView.builder(
-            itemCount: product.itemsCount,
-            itemBuilder: (context, index) => Column(
-                  children: [
-                    ProductItem(product.items[index]),
-                    Divider(),
-                  ],
-                )),
+      body: RefreshIndicator(
+        onRefresh: ()=>_refreshProducts(context),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: ListView.builder(
+              itemCount: product.itemsCount,
+              itemBuilder: (context, index) => Column(
+                    children: [
+                      ProductItem(product.items[index]),
+                      Divider(),
+                    ],
+                  )),
+        ),
       ),
     );
   }
