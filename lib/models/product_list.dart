@@ -4,12 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:formularios/models/product.dart';
 
-import '../data/dumy_data.dart';
-
 class ProductList with ChangeNotifier {
   final _url =
       'https://shop-cod3r-5dfd9-default-rtdb.firebaseio.com/products.json';
-  final List<Product> _items = dummyProducts;
+  final List<Product> _items = [];
 
   List<Product> get items => [..._items];
 
@@ -37,8 +35,22 @@ class ProductList with ChangeNotifier {
   }
 
   Future<void> loadProducts() async {
+    _items.clear();
     final response = await http.get(Uri.parse(_url));
-    print(jsonDecode(response.body));
+    if (response.body == 'null') return;
+    Map<String, dynamic> data = jsonDecode(response.body);
+    data.forEach((productId, productData) {
+      _items.add(
+        Product(
+            id: productId,
+            name: productData['name'],
+            description: productData['description'],
+            imageUrl: productData['imageUrl'],
+            price: productData['price'],
+            isFavorite: productData['isFavorite']),
+      );
+    });
+    notifyListeners();
   }
 
   Future<void> addProduct(Product product) async {
