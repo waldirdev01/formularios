@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:formularios/exception/http_exception.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:formularios/models/product.dart';
@@ -86,9 +87,22 @@ class ProductList with ChangeNotifier {
     }
   }
 
-  void deleteProduct(Product product) {
+  Future<void> removeProduct(Product product) async {
+    //exclui o prouduto no aparelho, tenta excluir no firebase e se der erro inclui o produto de olta na lista local
     int index = _items.indexWhere((element) => element.id == product.id);
     if (index >= 0) {
+      final product = _items[index];
+      _items.remove(product);
+      notifyListeners();
+      final response = await http.delete(Uri.parse('$_baseUrl/${product.id}'));
+      if (response.statusCode >= 400) {
+        _items.insert(index, product);
+        notifyListeners();
+        throw HttpException(
+          msg: 'Não foi possível excluir o produto',
+          statusCode: response.statusCode,
+        );
+      }
       _items.removeWhere((element) => element.id == product.id);
       notifyListeners();
     }
