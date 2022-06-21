@@ -7,7 +7,8 @@ import 'package:formularios/models/product.dart';
 import '../data/dumy_data.dart';
 
 class ProductList with ChangeNotifier {
-  final _baseUrl = 'https://shop-cod3r-5dfd9-default-rtdb.firebaseio.com';
+  final _url =
+      'https://shop-cod3r-5dfd9-default-rtdb.firebaseio.com/products.json';
   final List<Product> _items = dummyProducts;
 
   List<Product> get items => [..._items];
@@ -35,8 +36,13 @@ class ProductList with ChangeNotifier {
     }
   }
 
+  Future<void> loadProducts() async {
+    final response = await http.get(Uri.parse(_url));
+    print(jsonDecode(response.body));
+  }
+
   Future<void> addProduct(Product product) async {
-    final response = await http.post(Uri.parse('$_baseUrl/products.json'),
+    final response = await http.post(Uri.parse(_url),
         body: jsonEncode(
             product.toJson())); //.json é obrigatório para o Firebase realtiime
     final id = jsonDecode(response.body)['name'];

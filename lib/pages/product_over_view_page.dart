@@ -5,6 +5,7 @@ import '../components/app_drawer.dart';
 import '../components/badge.dart';
 import '../components/product_grid.dart';
 import '../models/cart.dart';
+import '../models/product_list.dart';
 import '../utils/app_routs.dart';
 
 enum FilterOptions { all, favorite }
@@ -18,6 +19,12 @@ class ProductsOverViewPage extends StatefulWidget {
 
 class _ProductsOverViewPageState extends State<ProductsOverViewPage> {
   bool _showFavoriteOnly = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ProductList>(context, listen: false).loadProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
