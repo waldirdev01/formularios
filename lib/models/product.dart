@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:formularios/utils/constants.dart';
+import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
   final String id, name, description, imageUrl;
@@ -12,7 +16,8 @@ class Product with ChangeNotifier {
       required this.imageUrl,
       required this.price,
       this.isFavorite = false});
- /* Pessoa.fromJson(dynamic map)
+
+  /* Pessoa.fromJson(dynamic map)
       : nome = map[kPessoaNomeColumn],
         apelido = map[kPessoaApelidoColumn],
         foto = map[kPessoaFotoColumn],
@@ -32,8 +37,23 @@ class Product with ChangeNotifier {
     };
   }
 
-  void toggleFavorite() {
+  void _toggleFavorite() {
     isFavorite = !isFavorite;
     notifyListeners();
+  }
+
+  Future<void> toggleFavorite() async {
+    try {
+      _toggleFavorite();
+      final response = await http.patch(Uri.parse('$PRODUCT_BASE_URL/$id.json'),
+          body: jsonEncode({
+            ' isFavorite': isFavorite,
+          }));
+      if (response.statusCode >= 400) {
+        _toggleFavorite();
+      }
+    } catch (_) {
+      _toggleFavorite();
+    }
   }
 }

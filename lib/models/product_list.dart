@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:formularios/exception/http_exception.dart';
+import 'package:formularios/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:formularios/models/product.dart';
 
 class ProductList with ChangeNotifier {
-  final _baseUrl =
-      'https://shop-cod3r-5dfd9-default-rtdb.firebaseio.com/products';
+  final _baseUrl = PRODUCT_BASE_URL;
   final List<Product> _items = [];
 
   List<Product> get items => [..._items];
@@ -94,7 +94,7 @@ class ProductList with ChangeNotifier {
       final product = _items[index];
       _items.remove(product);
       notifyListeners();
-      final response = await http.delete(Uri.parse('$_baseUrl/${product.id}'));
+      final response = await http.delete(Uri.parse('$_baseUrl/${product.id}.json'));
       if (response.statusCode >= 400) {
         _items.insert(index, product);
         notifyListeners();
