@@ -35,24 +35,20 @@ class ProductList with ChangeNotifier {
     }
   }
 
-  Future<void> addProduct(Product product) {
-    final future = http.post(Uri.parse('$_baseUrl/products.json'),
+  Future<void> addProduct(Product product) async {
+    final response = await http.post(Uri.parse('$_baseUrl/products.json'),
         body: jsonEncode(
             product.toJson())); //.json é obrigatório para o Firebase realtiime
-    return future.then<void>((response) {
-      // print(jsonDecode(response.body)); // para saber o que eu recebi de volta do firebase: retornou {name: -N51fzRx0lBTREWTBpF7}
-      // com os dados obtidos acima, vou criar um produto com o id (nome) que veio do firebase
-      final id = jsonDecode(response.body)['name'];
+    final id = jsonDecode(response.body)['name'];
 
-      _items.add(Product(
-          id: id,
-          name: product.name,
-          description: product.description,
-          imageUrl: product.imageUrl,
-          price: product.price,
-          isFavorite: product.isFavorite));
-      notifyListeners();
-    });
+    _items.add(Product(
+        id: id,
+        name: product.name,
+        description: product.description,
+        imageUrl: product.imageUrl,
+        price: product.price,
+        isFavorite: product.isFavorite));
+    notifyListeners();
   }
 
   Future<void> updateProduct(Product product) {

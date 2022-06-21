@@ -54,7 +54,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
     setState(() {});
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     final _isValid = _formKey.currentState?.validate() ?? false;
     if (!_isValid) {
       return;
@@ -64,13 +64,15 @@ class _ProductFormPageState extends State<ProductFormPage> {
     setState(() {
       _isLoading = true;
     });
-    Provider.of<ProductList>(context, listen: false)
-        .saveProduct(_formData)
-        .catchError((erro) {
-      return showDialog<void>(
+    try {
+      await Provider.of<ProductList>(context, listen: false)
+          .saveProduct(_formData);
+      Navigator.of(context).pop();
+    } catch (erro) {
+      await showDialog<void>(
           context: context,
           builder: (context) => AlertDialog(
-                title: Text('Erro inexperado'),
+                title: Text('Erro inexperado! Tente mais tarde.'),
                 content: Text(erro.toString()),
                 actions: [
                   TextButton(
@@ -78,10 +80,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       child: Text('Sair'))
                 ],
               ));
-    }).then((value) {
+    } finally {
       setState(() => _isLoading = false);
-      Navigator.of(context).pop();
-    });
+    }
   }
 
   bool isValidImageUrl(String url) {
