@@ -66,7 +66,19 @@ class _ProductFormPageState extends State<ProductFormPage> {
     });
     Provider.of<ProductList>(context, listen: false)
         .saveProduct(_formData)
-        .then((value) {
+        .catchError((erro) {
+      return showDialog<void>(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text('Erro inexperado'),
+                content: Text(erro.toString()),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text('Sair'))
+                ],
+              ));
+    }).then((value) {
       setState(() => _isLoading = false);
       Navigator.of(context).pop();
     });
