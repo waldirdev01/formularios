@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:formularios/models/auth.dart';
 import 'package:formularios/pages/auth_page.dart';
 import 'package:formularios/pages/cart_page.dart';
 import 'package:formularios/pages/orders_page.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ProductList()),
         ChangeNotifierProvider(create: (context) => Cart()),
         ChangeNotifierProvider(create: (context) => OrderList()),
+        ChangeNotifierProvider(create: (context) => Auth()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

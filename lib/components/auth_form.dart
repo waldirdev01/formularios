@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:formularios/models/auth.dart';
+import 'package:provider/provider.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -11,6 +13,7 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final _passwordController = TextEditingController();
+  final _confirmpasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   AuthMode _authMode = AuthMode.Login;
@@ -20,6 +23,7 @@ class _AuthFormState extends State<AuthForm> {
   };
 
   bool _isLogin() => _authMode == AuthMode.Login;
+
   bool _isSignup() => _authMode == AuthMode.Signup;
 
   void _switchAuthMode() {
@@ -32,7 +36,7 @@ class _AuthFormState extends State<AuthForm> {
     });
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     final isValid = _formKey.currentState?.validate() ?? false;
 
     if (!isValid) {
@@ -42,11 +46,12 @@ class _AuthFormState extends State<AuthForm> {
     setState(() => _isLoading = true);
 
     _formKey.currentState?.save();
+    Auth auth = Provider.of<Auth>(context, listen: false);
 
     if (_isLogin()) {
-      //Login
+      await auth.login(_authData['email']!, _authData['password']!);
     } else {
-      // Registrar
+      await auth.signup(_authData['email']!, _authData['password']!);
     }
 
     setState(() => _isLoading = false);
@@ -99,16 +104,16 @@ class _AuthFormState extends State<AuthForm> {
                   decoration: InputDecoration(labelText: 'Confirmar Senha'),
                   keyboardType: TextInputType.emailAddress,
                   obscureText: true,
-                  controller: _passwordController,
+                  controller: _confirmpasswordController,
                   validator: _isLogin()
                       ? null
                       : (_password) {
-                    final password = _password ?? '';
-                    if (password != _passwordController.text) {
-                      return 'Senhas informadas não conferem.';
-                    }
-                    return null;
-                  },
+                          final password = _password ?? '';
+                          if (password != _passwordController.text) {
+                            return 'Senhas informadas não conferem.';
+                          }
+                          return null;
+                        },
                 ),
               SizedBox(height: 20),
               if (_isLoading)
