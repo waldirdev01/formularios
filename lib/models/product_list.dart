@@ -7,13 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:formularios/models/product.dart';
 
 class ProductList with ChangeNotifier {
+  String _token;
   final _baseUrl = PRODUCT_BASE_URL;
-  final List<Product> _items = [];
+  List<Product> _items = [];
 
   List<Product> get items => [..._items];
 
   List<Product> get favoriteItems =>
       _items.where((product) => product.isFavorite).toList();
+
+  ProductList(this._token, this._items);
 
   int get itemsCount {
     return _items.length;
@@ -37,7 +40,7 @@ class ProductList with ChangeNotifier {
 
   Future<void> loadProducts() async {
     _items.clear();
-    final response = await http.get(Uri.parse('$_baseUrl.json'));
+    final response = await http.get(Uri.parse('$_baseUrl.json?auth=$_token'));
     if (response.body == 'null') return;
 
     Map<String, dynamic> data = jsonDecode(response.body);
@@ -95,7 +98,8 @@ class ProductList with ChangeNotifier {
       final product = _items[index];
       _items.remove(product);
       notifyListeners();
-      final response = await http.delete(Uri.parse('$_baseUrl/${product.id}.json'));
+      final response =
+          await http.delete(Uri.parse('$_baseUrl/${product.id}.json'));
       if (response.statusCode >= 400) {
         _items.insert(index, product);
         notifyListeners();
