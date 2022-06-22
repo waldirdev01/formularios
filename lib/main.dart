@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:formularios/pages/auth_page.dart';
 import 'package:formularios/pages/cart_page.dart';
 import 'package:formularios/pages/orders_page.dart';
 import 'package:formularios/pages/product_detail_page.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         ),
         //home: const ProductsOverViewPage(),
         routes: {
+          AppRoutes.kAUTH: (context) => const AuthPage(),
           AppRoutes.kHOME: (context) => const ProductsOverViewPage(),
           AppRoutes.kPRODUCTDETAIL: (context) => const ProductDetailPage(),
           AppRoutes.kCARTPAGE: (context) => const CartPage(),
