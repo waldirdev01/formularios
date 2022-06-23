@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../utils/app_routs.dart';
+import '../models/auth.dart';
+import '../utils/app_routes.dart';
+
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -11,7 +14,7 @@ class AppDrawer extends StatelessWidget {
       child: Column(
         children: [
           AppBar(
-            title: Text('Bem-vindo, Usuário'),
+            title: Text('Bem vindo Uusário!'),
             automaticallyImplyLeading: false,
           ),
           Divider(),
@@ -19,7 +22,9 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.shop),
             title: Text('Loja'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(AppRoutes.AUTH_OR_HOME);
+              Navigator.of(context).pushReplacementNamed(
+                AppRoutes.AUTH_OR_HOME,
+              );
             },
           ),
           Divider(),
@@ -27,15 +32,34 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.payment),
             title: Text('Pedidos'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(AppRoutes.kORDERS);
+              Navigator.of(context).pushReplacementNamed(
+                AppRoutes.ORDERS,
+              );
             },
           ),
           Divider(),
           ListTile(
             leading: Icon(Icons.edit),
-            title: Text('Produtos'),
+            title: Text('Gerenciar Produtos'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(AppRoutes.kPRODUCTS);
+              Navigator.of(context).pushReplacementNamed(
+                AppRoutes.PRODUCTS,
+              );
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.exit_to_app),
+            title: Text('Sair'),
+            onTap: () {
+              Provider.of<Auth>(
+                context,
+                listen: false,
+              ).logout();
+
+              Navigator.of(context).pushReplacementNamed(
+                AppRoutes.AUTH_OR_HOME,
+              );
             },
           ),
         ],

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:formularios/models/auth.dart';
 import 'package:provider/provider.dart';
 
-import '../exception/auth_exception.dart';
+import '../exceptions/auth_exception.dart';
+import '../models/auth.dart';
+
 
 enum AuthMode { Signup, Login }
+
 class AuthForm extends StatefulWidget {
   const AuthForm({Key? key}) : super(key: key);
 
@@ -39,14 +41,8 @@ class _AuthFormState extends State<AuthForm> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(
-          'Ocorreu um Erro',
-          style: TextStyle(color: Colors.black),
-        ),
-        content: Text(
-          msg,
-          style: TextStyle(color: Colors.black),
-        ),
+        title: Text('Ocorreu um Erro'),
+        content: Text(msg),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -71,7 +67,7 @@ class _AuthFormState extends State<AuthForm> {
 
     try {
       if (_isLogin()) {
-        //Login
+        // Login
         await auth.login(
           _authData['email']!,
           _authData['password']!,
@@ -109,7 +105,6 @@ class _AuthFormState extends State<AuthForm> {
           child: Column(
             children: [
               TextFormField(
-                style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(labelText: 'E-mail'),
                 keyboardType: TextInputType.emailAddress,
                 onSaved: (email) => _authData['email'] = email ?? '',
@@ -122,7 +117,6 @@ class _AuthFormState extends State<AuthForm> {
                 },
               ),
               TextFormField(
-                style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(labelText: 'Senha'),
                 keyboardType: TextInputType.emailAddress,
                 obscureText: true,
@@ -138,19 +132,18 @@ class _AuthFormState extends State<AuthForm> {
               ),
               if (_isSignup())
                 TextFormField(
-                  style: TextStyle(color: Colors.black),
                   decoration: InputDecoration(labelText: 'Confirmar Senha'),
                   keyboardType: TextInputType.emailAddress,
                   obscureText: true,
                   validator: _isLogin()
                       ? null
                       : (_password) {
-                    final password = _password ?? '';
-                    if (password != _passwordController.text) {
-                      return 'Senhas informadas não conferem.';
-                    }
-                    return null;
-                  },
+                          final password = _password ?? '';
+                          if (password != _passwordController.text) {
+                            return 'Senhas informadas não conferem.';
+                          }
+                          return null;
+                        },
                 ),
               SizedBox(height: 20),
               if (_isLoading)
@@ -177,7 +170,7 @@ class _AuthFormState extends State<AuthForm> {
                 child: Text(
                   _isLogin() ? 'DESEJA REGISTRAR?' : 'JÁ POSSUI CONTA?',
                 ),
-              )
+              ),
             ],
           ),
         ),

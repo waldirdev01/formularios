@@ -1,44 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:formularios/components/app_drawer.dart';
-import 'package:formularios/components/product_item.dart';
-import 'package:formularios/models/product_list.dart';
-import 'package:formularios/utils/app_routs.dart';
 import 'package:provider/provider.dart';
 
+import '../components/app_drawer.dart';
+import '../components/product_item.dart';
+import '../models/product_list.dart';
+import '../utils/app_routes.dart';
+
+
 class ProductsPage extends StatelessWidget {
- const ProductsPage({Key? key}) : super(key: key);
+  const ProductsPage({Key? key}) : super(key: key);
 
   Future<void> _refreshProducts(BuildContext context) {
-    return Provider.of<ProductList>(context, listen: false).loadProducts();
+    return Provider.of<ProductList>(
+      context,
+      listen: false,
+    ).loadProducts();
   }
 
   @override
   Widget build(BuildContext context) {
-    final ProductList product = Provider.of(context);
+    final ProductList products = Provider.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gerenciar produtos'),
+        title: Text('Gerenciar Produtos'),
         actions: [
           IconButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(AppRoutes.kPRODUCT_FORM);
-              },
-              icon: Icon(Icons.add))
+            icon: Icon(Icons.add),
+            onPressed: () {
+              Navigator.of(context).pushNamed(
+                AppRoutes.PRODUCT_FORM,
+              );
+            },
+          ),
         ],
       ),
-      drawer: const AppDrawer(),
+      drawer: AppDrawer(),
       body: RefreshIndicator(
-        onRefresh: ()=>_refreshProducts(context),
+        onRefresh: () => _refreshProducts(context),
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: ListView.builder(
-              itemCount: product.itemsCount,
-              itemBuilder: (context, index) => Column(
-                    children: [
-                      ProductItem(product.items[index]),
-                      Divider(),
-                    ],
-                  )),
+            itemCount: products.itemsCount,
+            itemBuilder: (ctx, i) => Column(
+              children: [
+                ProductItem(products.items[i]),
+                Divider(),
+              ],
+            ),
+          ),
         ),
       ),
     );

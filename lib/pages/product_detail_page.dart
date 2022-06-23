@@ -3,23 +3,6 @@ import 'package:flutter/material.dart';
 import '../models/product.dart';
 
 
-// Recebe o produto quando clica na imagem pelo push. O classe ativa utiliza as rotas nomeadas
-/*
-class ProductDetailPage extends StatelessWidget {
-  const ProductDetailPage({Key? key, required this.product}) : super(key: key);
-  final Product product;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(product.title),
-      ),
-    );
-  }
-}
-*/
-
 class ProductDetailPage extends StatelessWidget {
   const ProductDetailPage({
     Key? key,
@@ -27,8 +10,8 @@ class ProductDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Product product = ModalRoute.of(context)!.settings.arguments
-        as Product; // '?' no lugar de '!' para chamar settings somente se houver product
+    final Product product =
+        ModalRoute.of(context)!.settings.arguments as Product;
     return Scaffold(
       appBar: AppBar(
         title: Text(product.name),
@@ -43,7 +26,24 @@ class ProductDetailPage extends StatelessWidget {
                 product.imageUrl,
                 fit: BoxFit.cover,
               ),
-            )
+            ),
+            SizedBox(height: 10),
+            Text(
+              'R\$ ${product.price}',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 20,
+              ),
+            ),
+            SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              width: double.infinity,
+              child: Text(
+                product.description,
+                textAlign: TextAlign.center,
+              ),
+            ),
           ],
         ),
       ),
