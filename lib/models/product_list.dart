@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:formularios/models/product.dart';
 
 class ProductList with ChangeNotifier {
-  String _token;
+  final String _token;
   final _baseUrl = PRODUCT_BASE_URL;
   List<Product> _items = [];
 
@@ -59,7 +59,7 @@ class ProductList with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    final response = await http.post(Uri.parse('$_baseUrl.json'),
+    final response = await http.post(Uri.parse('$_baseUrl.json?auth=$_token'),
         body: jsonEncode(
             product.toJson())); //.json é obrigatório para o Firebase realtiime
     final id = jsonDecode(response.body)['name'];
@@ -78,7 +78,7 @@ class ProductList with ChangeNotifier {
     int index = _items.indexWhere((element) => element.id == product.id);
     if (index >= 0) {
       final response =
-          await http.patch(Uri.parse('$_baseUrl/${product.id}.json'),
+          await http.patch(Uri.parse('$_baseUrl/${product.id}.json?auth=$_token'),
               body: jsonEncode({
                 'name': product.name,
                 'description': product.description,
@@ -99,7 +99,7 @@ class ProductList with ChangeNotifier {
       _items.remove(product);
       notifyListeners();
       final response =
-          await http.delete(Uri.parse('$_baseUrl/${product.id}.json'));
+          await http.delete(Uri.parse('$_baseUrl/${product.id}.json?auth=$_token'));
       if (response.statusCode >= 400) {
         _items.insert(index, product);
         notifyListeners();

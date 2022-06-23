@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:formularios/models/auth.dart';
 import 'package:provider/provider.dart';
 
 import '../models/cart.dart';
@@ -14,6 +15,7 @@ class ProductGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final auth = Provider.of<Auth>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -22,7 +24,7 @@ class ProductGridItem extends StatelessWidget {
           leading: Consumer<Product>(
             builder: (context, product, _) => IconButton(
                 onPressed: () {
-                  product.toggleFavorite();
+                  product.toggleFavorite(auth.token ?? '');
                 },
                 icon: Icon(product.isFavorite
                     ? Icons.favorite
@@ -36,7 +38,8 @@ class ProductGridItem extends StatelessWidget {
             icon: const Icon(Icons.shopping_cart),
             onPressed: () {
               cart.addItem(product);
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();//apaga o snackbar quando chama o próximo
+              ScaffoldMessenger.of(context)
+                  .hideCurrentSnackBar(); //apaga o snackbar quando chama o próximo
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: const Text(

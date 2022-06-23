@@ -8,7 +8,10 @@ import 'cart.dart';
 import 'order.dart';
 
 class OrderList with ChangeNotifier {
+  String _token;
   List<Order> _items = [];
+
+  OrderList(this._token, this._items);
 
   List<Order> get items {
     return [..._items];
@@ -20,19 +23,18 @@ class OrderList with ChangeNotifier {
 
   Future<void> addOrder(Cart cart) async {
     final date = DateTime.now();
-    final response = await http.post(Uri.parse('$ORDER_BASE_URL.json'),
+    final response = await http.post(Uri.parse('$ORDER_BASE_URL.json?auth=$_token'),
         body: jsonEncode({
           'total': cart.totalAmount,
           'date': date.toIso8601String(),
           'products': cart.items.values
-              .map((cartItem) =>
-          {
-            'id': cartItem.id,
-            'productId': cartItem.productId,
-            'name': cartItem.name,
-            'quantity': cartItem.quantinty,
-            'price': cartItem.price,
-          })
+              .map((cartItem) => {
+                    'id': cartItem.id,
+                    'productId': cartItem.productId,
+                    'name': cartItem.name,
+                    'quantity': cartItem.quantinty,
+                    'price': cartItem.price,
+                  })
               .toList()
         }));
     final res = jsonDecode(response.body);
@@ -48,17 +50,18 @@ class OrderList with ChangeNotifier {
   }
 
   Future<void> loadOrders() async {
-    _items.clear();
-    final response = await http.get(Uri.parse('$ORDER_BASE_URL.json'));
+    List<Order> items = [];
+    final response = await http.get(Uri.parse('$ORDER_BASE_URL.json?auth=$_token'));
     if (response.body == 'null') return;
     Map<String, dynamic> data = jsonDecode(response.body);
     print(data);
     data.forEach((ordertId, orderData) {
-      _items.add(Order(
+      items.add(Order(
           id: ordertId,
           total: orderData['total'],
           products: (orderData['products'] as List<dynamic>).map((item) {
-            return CartItem(id: item['id'],
+            return CartItem(
+                id: item['id'],
                 productId: item['productId'],
                 name: item['name'],
                 quantinty: item['quantity'],
@@ -66,7 +69,7 @@ class OrderList with ChangeNotifier {
           }).toList(),
           date: DateTime.parse(orderData['date'])));
     });
+    _items = items.reversed.toList();
     notifyListeners();
-
   }
 }
